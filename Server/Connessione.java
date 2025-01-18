@@ -28,7 +28,11 @@ public class Connessione {
                 DatagramSocket client = new DatagramSocket(pacchettoRisposta.getPort(), indirizzoClient);
                 lista.add(client);
                 i++;
-                
+
+                String messaggio = "ok"; //crea messaggio da mandare
+                byte[] buffer = messaggio.getBytes(); //trasformare il messaggio in array di buffer
+                DatagramPacket pacchetto = new DatagramPacket(buffer, buffer.length, indirizzoClient, pacchettoRisposta.getPort()); //creazione del pacchetto da mandare
+                serverSocket.send(pacchetto); //invio del pacchetto;
             }
             // NB: la richiesta receive è bloccante
         }

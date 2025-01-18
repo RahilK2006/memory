@@ -16,23 +16,23 @@ public class Connessione {
 
             byte[] bufferRisposta = new byte[1024]; // creazione del buffer dove salvare il messaggio ricevuto
 
-            DatagramPacket pacchettoRisposta = new DatagramPacket(bufferRisposta, bufferRisposta.length); // creazione dei pacchetto che riceve la risposta
+            DatagramPacket pacchetto = new DatagramPacket(bufferRisposta, bufferRisposta.length); // creazione dei pacchetto che riceve la risposta
 
-            serverSocket.receive(pacchettoRisposta); // richiesta bloccante che attende la recezione di una risposta
+            serverSocket.receive(pacchetto); // richiesta bloccante che attende la recezione di una risposta
 
-            System.out.println(pacchettoRisposta.getData()); // prende il testo del messaggio dalla risposta e lo stamp a schermo
+            String mess = new String(pacchetto.getData()).trim(); //toglie gli spazi null alla fine del messaggio
+            System.out.println(mess); // prende il testo del messaggio dalla risposta e lo stamp a schermo
 
-            if (pacchettoRisposta.getData().equals("connettiti")) {
+            if (mess.equals("connettiti")) {
                 //individuo chi ha mandato il messaggio per salvarlo 
-                InetAddress indirizzoClient = pacchettoRisposta.getAddress();
-                DatagramSocket client = new DatagramSocket(pacchettoRisposta.getPort(), indirizzoClient);
-                lista.add(client);
+                InetAddress indirizzoClient = pacchetto.getAddress();
+                lista.add(new Client(indirizzoClient, pacchetto.getPort()));
                 i++;
 
                 String messaggio = "ok"; //crea messaggio da mandare
                 byte[] buffer = messaggio.getBytes(); //trasformare il messaggio in array di buffer
-                DatagramPacket pacchetto = new DatagramPacket(buffer, buffer.length, indirizzoClient, pacchettoRisposta.getPort()); //creazione del pacchetto da mandare
-                serverSocket.send(pacchetto); //invio del pacchetto;
+                DatagramPacket pacchettoRisposta = new DatagramPacket(buffer, buffer.length, indirizzoClient, pacchetto.getPort()); //creazione del pacchetto da mandare
+                serverSocket.send(pacchettoRisposta); //invio del pacchetto;
             }
             // NB: la richiesta receive è bloccante
         }

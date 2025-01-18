@@ -1,14 +1,13 @@
-import java.net.DatagramSocket;
 import java.util.ArrayList;
 
 public class Clients {
-    ArrayList <DatagramSocket> listaClients;
+    ArrayList <Client> listaClients;
 
     public Clients() {
-        this.listaClients = new ArrayList<DatagramSocket>();
+        this.listaClients = new ArrayList<Client>();
     }
 
-    public void add(DatagramSocket client){
+    public void add(Client client){
         this.listaClients.add(client);
     }
 
@@ -16,5 +15,8 @@ public class Clients {
         return this.listaClients.size();
     }
 
-    
+    public Client get(int i)
+    {
+        return this.listaClients.get(i);
+    }
 }

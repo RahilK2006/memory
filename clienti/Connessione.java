@@ -4,7 +4,7 @@ import java.net.InetAddress;
 
 public class Connessione {
 
-    public static void connessioneServer(String name, String serverIP, int port) throws Exception 
+    public static DatagramSocket connessioneServer(String name, String serverIP, int port) throws Exception 
     {
         DatagramSocket clientSocket = new DatagramSocket();
         try {
@@ -25,5 +25,6 @@ public class Connessione {
             clientSocket.close();
             throw new Exception("Errore durante la connessione: " + ex.getMessage());
         }
+        return clientSocket;
     }
 }

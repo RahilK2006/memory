@@ -4,12 +4,13 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.DatagramSocket;
+import java.net.Socket;
 
 public class GraficaClient {
     private JTextField textboxName;
     private JTextField textboxIP;
     private JTextField textboPort;
-    private JTextArea logArea;
     private JButton connessioneBotton;
 
     public GraficaClient() {
@@ -19,6 +20,8 @@ public class GraficaClient {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
+
+        
         // Pannello superiore con sfondo e titolo
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(255, 223, 186)); // Colore giallo chiaro
@@ -28,18 +31,35 @@ public class GraficaClient {
         titlePanel.add(titleLabel);
         frame.add(titlePanel, BorderLayout.NORTH);
 
-        // Pannello centrale per l'input
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 2, 10, 10));
+
+        JPanel inputPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                
+                ImageIcon backgroundImage = new ImageIcon(getClass().getResource("/immagini/Sfondo2.png"));
+                Image img = backgroundImage.getImage();
+
+                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        inputPanel.setLayout(new GridLayout(3, 3, 50, 10));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        inputPanel.add(new JLabel());
         inputPanel.add(new JLabel("Nome giocatore:"));
+
         textboxName = new JTextField();
         inputPanel.add(textboxName);
+
+
+        inputPanel.add(new JLabel());
 
         inputPanel.add(new JLabel("IP del server:"));
         textboxIP = new JTextField("127.0.0.1");
         inputPanel.add(textboxIP);
+
+        inputPanel.add(new JLabel());
 
         inputPanel.add(new JLabel("Porta:"));
         textboPort = new JTextField("1234");
@@ -47,12 +67,8 @@ public class GraficaClient {
 
         frame.add(inputPanel, BorderLayout.CENTER);
 
-        // Pannello inferiore per il log
-        logArea = new JTextArea();
-        logArea.setEditable(false);
-        logArea.setBackground(new Color(230, 230, 250)); // Colore lilla chiaro
-        logArea.setFont(new Font("Courier New", Font.PLAIN, 12));
-        frame.add(new JScrollPane(logArea), BorderLayout.SOUTH);
+
+        
 
         // Bottone per connettersi
         connessioneBotton = new JButton("Connetti al Server");
@@ -117,22 +133,20 @@ public class GraficaClient {
     private void connectToServer(JFrame frame) {
         try {
             int port = Integer.parseInt(textboPort.getText());
-            logArea.append("Connessione al server...\n");
-
             // Simulazione della connessione al server
-            Connessione.connessioneServer(textboxName.getText(), textboxIP.getText(), port);
+            DatagramSocket socket= Connessione.connessioneServer(textboxName.getText(), textboxIP.getText(), port);
 
-            logArea.append("Connessione riuscita!\n");
 
             JOptionPane.showMessageDialog(frame, "Connessione riuscita! Proseguendo alla schermata successiva...");
+            AttesaRispostaGUI attesaRispostaGUI=new AttesaRispostaGUI(textboxName.getText(),socket);
+
             frame.dispose();
+
 
                         
 
-        } catch (NumberFormatException ex) {
-            logArea.append("Il numero di porta deve essere un intero.\n");
-        } catch (Exception ex) {
-            logArea.append("Errore durante la connessione: " + ex.getMessage() + "\n");
+        }  catch (Exception ex) {
+            JOptionPane.showMessageDialog(frame, "Connessione non riuscita: " + ex.getMessage());
         }
     }
 
